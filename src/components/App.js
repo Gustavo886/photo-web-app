@@ -1,26 +1,31 @@
-import logo from './logo.svg';
 import './App.css';
+import unsplash from "../api/unsplash";
+import { useEffect, useState } from 'react';
 import Header from './Header';
-import { withAuthenticator } from '@aws-amplify/ui-react';
+import ImageList from './ImageList';
+// import { withAuthenticator } from '@aws-amplify/ui-react';
 
 function App() {
+
+  const [images, setImages] = useState([]);
+  const [term, setTerm] = useState('cats');
+
+  const response = async () => {
+    const result = await unsplash.get('/search/photos' , {
+        params: { query: term }
+    });
+
+    setImages(result.data.results);
+  } 
+
+  useEffect(() => {
+    response();
+  },[term])
+
   return (
     <div className="App">
       <Header />
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <ImageList images={images}/>
     </div>
   );
 }
